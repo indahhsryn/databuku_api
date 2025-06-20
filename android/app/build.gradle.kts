@@ -7,8 +7,9 @@ plugins {
 
 android {
     namespace = "com.example.databukuapi_tugas"
+
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

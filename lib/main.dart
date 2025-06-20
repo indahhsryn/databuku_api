@@ -135,16 +135,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchBooks() async {
-    final response = await http.get(
-        Uri.parse('https://www.googleapis.com/books/v1/volumes?q=flutter')); // Mengambil data buku dari API
-    if (response.statusCode == 200) { // Jika permintaan berhasil
-      final data = json.decode(response.body); // Mengonversi data JSON
+    final response = await http.get(Uri.parse('https://www.googleapis.com/books/v1/volumes?q=flutter'));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
       setState(() {
-        books = data['items']; // Menyimpan data buku
-        filteredBooks = books; // Menyimpan buku yang difilter
+        books = data['items'];
+        filteredBooks = books;
       });
+    } else {
+      print('Failed to fetch books: ${response.statusCode}');
     }
   }
+
 
   String shortDescription(String? text) {
     if (text == null) return ''; // Mengembalikan string kosong jika teks null
