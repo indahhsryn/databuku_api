@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1077005297380",
+    "project_id": "ibuku-e3693",
+    "storage_bucket": "ibuku-e3693.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1077005297380:android:654eea898a206abbefaef1",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4CvdYZNfZ4cFZlJwyP7dy333uckop6iI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
