@@ -1,9 +1,19 @@
-import 'package:flutter/material.dart'; // Mengimpor paket material untuk menggunakan widget Flutter
-import 'package:http/http.dart' as http; // Mengimpor paket http untuk melakukan permintaan HTTP
-import 'dart:convert'; // Mengimpor pustaka untuk mengonversi data JSON
-import 'package:url_launcher/url_launcher.dart'; // Mengimpor paket untuk membuka URL di browser
+import 'package:flutter/material.dart'; // Mengimpor library dasar Material Design Flutter
+import 'package:http/http.dart' as http; // Mengimpor library HTTP untuk melakukan permintaan jaringan
+import 'dart:convert'; // Mengimpor library untuk mengonversi data JSON
+import 'package:url_launcher/url_launcher.dart'; // Mengimpor library untuk membuka URL
+import 'login_screen.dart'; // Mengimpor layar login
+import 'book_detail_screen.dart'; // Mengimpor layar detail buku
+import 'package:firebase_core/firebase_core.dart'; // Mengimpor library Firebase
+import 'firebase_options.dart'; // Mengimpor pengaturan Firebase
 
-void main() => runApp(const MyApp()); // Fungsi utama untuk menjalankan aplikasi
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Memastikan binding widget diinisialisasi
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform, // Menginisialisasi Firebase dengan opsi yang sesuai platform
+  );
+  runApp(const MyApp()); // Menjalankan aplikasi
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key}); // Konstruktor untuk MyApp
@@ -12,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false, // Menyembunyikan banner debug
-      home: SplashScreen(), // Menetapkan SplashScreen sebagai halaman awal
+      home: LoginScreen(), // Menetapkan LoginScreen sebagai halaman utama
     );
   }
 }
@@ -135,18 +145,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> fetchBooks() async {
-    final response = await http.get(Uri.parse('https://www.googleapis.com/books/v1/volumes?q=flutter'));
+    final response = await http.get(Uri.parse('https://www.googleapis.com/books/v1/volumes?q=flutter')); // Mengambil data buku dari API
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final data = json.decode(response.body); // Mengonversi respons JSON
       setState(() {
-        books = data['items'];
-        filteredBooks = books;
+        books = data['items']; // Menyimpan daftar buku
+        filteredBooks = books; // Menyimpan daftar buku yang difilter
       });
     } else {
-      print('Failed to fetch books: ${response.statusCode}');
+      print('Failed to fetch books: ${response.statusCode}'); // Menampilkan pesan kesalahan
     }
   }
-
 
   String shortDescription(String? text) {
     if (text == null) return ''; // Mengembalikan string kosong jika teks null
@@ -180,8 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
         showUnselectedLabels: true, // Menampilkan label item yang tidak dipilih
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'), // Item Beranda
-          BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: 'Favorit'), // Item Favorit
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'), // Item Dashboard
+          BottomNavigationBarItem(icon: Icon(Icons.reviews), label: 'Ulasan'), // Item Ulasan
           BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profil'), // Item Profil
         ],
       ),
@@ -195,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 children: [
                   const CircleAvatar(
-                    backgroundImage: AssetImage('assets/profile.png'), // Gambar profil
+                    backgroundImage: AssetImage('images/profile.png'), // Gambar profil
                   ),
                   const SizedBox(width: 10), // Jarak antara gambar dan teks
                   Expanded(
@@ -254,12 +262,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   final link = book['previewLink'] ?? ''; // Mengambil link pratinjau
 
                   return GestureDetector(
-                    onTap: () async {
-                      final uri = Uri.parse(link); // Mengonversi link menjadi URI
-                      if (await canLaunchUrl(uri)) { // Memeriksa apakah URI dapat diluncurkan
-                        await launchUrl(uri); // Meluncurkan URI
-                      }
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BookDetailScreen(book: filteredBooks[index]), // Navigasi ke detail buku
+                        ),
+                      );
                     },
+
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.lightBlue[50], // Warna latar belakang item
